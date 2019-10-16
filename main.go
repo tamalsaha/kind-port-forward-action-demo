@@ -39,7 +39,7 @@ func main() {
 		log.Fatalln(err)
 	}
 
-	resp, err := http.Get(fmt.Sprintf("http://120.0.0.1:%d", tunnel.Local))
+	resp, err := http.Get(fmt.Sprintf("http://127.0.0.1:%d", tunnel.Local))
 	if err != nil {
 		log.Fatalln(err)
 	}
