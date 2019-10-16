@@ -34,12 +34,10 @@ func main() {
 	kc := kubernetes.NewForConfigOrDie(config)
 	tunnel := portforward.NewTunnel(kc.CoreV1().RESTClient(), config, "default", "nginx", 80)
 	defer tunnel.Close()
-	go func() {
-		err = tunnel.ForwardPort()
-		if err != nil {
-			log.Fatalln(err)
-		}
-	}()
+	err = tunnel.ForwardPort()
+	if err != nil {
+		log.Fatalln(err)
+	}
 
 	resp, err := http.Get(fmt.Sprintf("http://120.0.0.1:%d", tunnel.Local))
 	if err != nil {

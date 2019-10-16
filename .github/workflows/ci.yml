@@ -64,4 +64,4 @@ jobs:
         GO111MODULE: on
       run: |
         export KUBECONFIG="$(kind get kubeconfig-path)"
-        go run main.go
+        go run -mod=vendor main.go
