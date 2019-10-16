@@ -48,4 +48,6 @@ jobs:
         kubectl apply -f hack/kubernetes/workload.yaml
         kubectl wait --for=condition=Ready pods --all --timeout=5m
         kubectl port-forward nginx 30005:80&
+        sleep 5
+        netstat -tulpn
         curl -X GET http://127.0.0.1:30005
