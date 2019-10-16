@@ -64,4 +64,6 @@ jobs:
         GO111MODULE: on
       run: |
         export KUBECONFIG="$(kind get kubeconfig-path)"
-        go run -mod=vendor main.go
+        # go run -mod=vendor main.go
+        docker run --network=host -v $HOME/.kube:/root/.kube -e KUBECONFIG=/root/.kube/kind-config-kind tigerworks/kind-port-forward-action-demo:latest
+
