@@ -14,6 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
+    - name: Set up Go 1.12
+      uses: actions/setup-go@v1
+      with:
+        go-version: 1.12
+      id: go
+
     - name: Check out code into the Go module directory
       uses: actions/checkout@v1
 
@@ -52,3 +58,10 @@ jobs:
         netstat -tulpn
         curl -X GET http://127.0.0.1:30005
         docker run --rm --net=host byrnedo/alpine-curl http://127.0.0.1:30005
+
+    - name: Test port-forward from code
+      env:
+        GO111MODULE: on
+      run: |
+        export KUBECONFIG="$(kind get kubeconfig-path)"
+        go run main.go
