@@ -51,3 +51,4 @@ jobs:
         sleep 5
         netstat -tulpn
         curl -X GET http://127.0.0.1:30005
+        docker run --rm --net=host byrnedo/alpine-curl http://127.0.0.1:30005
