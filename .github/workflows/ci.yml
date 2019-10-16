@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches-ignore:
+      - 'release-*'
+    tags-ignore:
+      - '*.*'
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v1
+
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: crazy-max/ghaction-docker-buildx@master
+      with:
+        version: latest
+
+    - name: Available platforms
+      run: echo ${{ steps.buildx.outputs.platforms }}
+
+    - name: Create Kubernetes cluster
+      id: kind
+      uses: engineerd/setup-kind@v0.1.0
+      with:
+        config: hack/kubernetes/kind.yaml
+
+    - name: Prepare cluster for testing
+      id: local-path
+      run: |
+        export KUBECONFIG="$(kind get kubeconfig-path)"
+        echo
+        echo "waiting for nodes to be ready ..."
+        kubectl wait --for=condition=Ready nodes --all --timeout=5m
+        kubectl get nodes
+
+    - name: Test port-forward
+      run: |
+        export KUBECONFIG="$(kind get kubeconfig-path)"
+        echo "deploy nginx"
+        kubectl apply -f hack/kubernetes/workload.yaml
+        kubectl wait --for=condition=Ready pods --all --timeout=5m
+        kubectl port-forward nginx 30005:80&
+        curl -X GET http://127.0.0.1:30005
